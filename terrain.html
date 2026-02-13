@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Terrain Viewer</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <style>
+    html,body{height:100%;margin:0;background:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;overflow:hidden;}
+    model-viewer{width:100vw;height:100vh;touch-action:none;background:#fff;}
+    #back{position:fixed;left:14px;top:14px;z-index:10;padding:10px 12px;border-radius:12px;border:1px solid #eee;background:#fff;color:#111;text-decoration:none;font-weight:700}
+
+    /* Zoom UI */
+    #zoomUI{position:fixed;right:14px;bottom:14px;z-index:10;display:flex;flex-direction:column;gap:10px;}
+    #zoomUI button{width:54px;height:54px;border:0;border-radius:16px;background:#fff;color:#111;font-size:22px;font-weight:900;cursor:pointer;box-shadow:0 10px 25px rgba(0,0,0,.18)}
+    #zoomUI button:active{transform:scale(.98)}
+
+    #tip{position:fixed;left:14px;bottom:14px;z-index:10;max-width:min(560px,82vw);padding:10px 12px;border-radius:12px;background:rgba(0,0,0,.55);color:#fff;font-size:13px;line-height:1.35}
+  </style>
+</head>
+<body>
+  <a id="back" href="/">← Back</a>
+
+  <model-viewer
+    id="mv"
+    src="models/terrain.glb"
+    alt="Terrain 3D model"
+    camera-controls
+    touch-action="none"
+    shadow-intensity="1"
+    exposure="1"
+    ar
+    ar-modes="webxr scene-viewer quick-look"
+    ar-placement="floor"
+    ar-scale="auto"
+    interaction-prompt="none"
+  >
+    <button slot="ar-button" style="padding:14px 18px;border:0;border-radius:14px;font-size:18px;font-weight:700;background:#40cbcb;color:#fff;box-shadow:0 10px 25px rgba(0,0,0,.15);cursor:pointer;">View in AR</button>
+  </model-viewer>
+
+  <div id="zoomUI" aria-label="Zoom controls">
+    <button id="zoomIn" title="Zoom in">+</button>
+    <button id="zoomOut" title="Zoom out">−</button>
+  </div>
+
+  <div id="tip">
+    Zoom in/out: <b>+</b> / <b>−</b> buttons use karo (mobile me pinch kabhi-kabhi block hota hai). AR me pinch se size change ho sakta hai.
+  </div>
+
+  <script>
+    (function(){
+      const mv = document.getElementById('mv');
+      const zin = document.getElementById('zoomIn');
+      const zout = document.getElementById('zoomOut');
+
+      // Smooth zoom by changing camera orbit radius
+      function setRadius(mult){
+        try{
+          const o = mv.getCameraOrbit();
+          const r = Math.max(0.02, o.radius * mult);
+          mv.cameraOrbit = `${o.theta}rad ${o.phi}rad ${r}m`;
+        }catch(e){/* ignore */}
+      }
+
+      zin.addEventListener('click', () => setRadius(0.85));
+      zout.addEventListener('click', () => setRadius(1.18));
+
+      // Ensure initial orbit is not too far (helps wheel zoom feel)
+      mv.addEventListener('load', () => {
+        try{
+          const o = mv.getCameraOrbit();
+          mv.cameraOrbit = `${o.theta}rad ${o.phi}rad ${Math.max(0.25, o.radius * 0.85)}m`;
+        }catch(e){}
+      });
+    })();
+  </script>
+</body>
+</html>

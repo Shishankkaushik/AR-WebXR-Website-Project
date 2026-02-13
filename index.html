@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>KDLL AR Course</title>
+  <script type=\"module\" src=\"https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js\"></script>
+
+  <style>
+    :root{
+      --shadow: 0 18px 40px rgba(0,0,0,.18);
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      background:#fff;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    }
+
+    /* Full-screen screens */
+    .screen{
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#fff;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .35s ease;
+    }
+    .screen.is-active{
+      opacity:1;
+      pointer-events:auto;
+    }
+
+    /* Keeps the image area consistent, so hotspots line up across devices */
+    .screen__frame{
+      position:relative;
+      width:min(100vw, calc(100vh * var(--ratio)));
+      height:min(100vh, calc(100vw / var(--ratio)));
+    }
+
+    .screen__frame img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      display:block;
+      user-select:none;
+      -webkit-user-drag:none;
+    }
+
+    /* Hotspots are invisible buttons placed on top of images */
+    .hotspot{
+      position:absolute;
+      background:transparent;
+      border:0;
+      padding:0;
+      cursor:pointer;
+      z-index:2;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hotspot:focus-visible{
+      outline:3px solid rgba(255,255,255,.85);
+      outline-offset:2px;
+    }
+
+    /* Screen 2: Next button hotspot */
+    .next-hotspot{
+      left:57.99%;
+      top:63.62%;
+      width:36.72%;
+      height:7.52%;
+    }
+
+    /* Screen 3: ONLY "Land Ceiling Framework" card is clickable */
+    .lcf-hotspot{
+      left:5.5026%;
+      top:23.6328%;
+      width:86.2434%;
+      height:15.8691%;
+      cursor:pointer;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .screen{ transition:none; }
+    }
+  
+    /* Screen 4: Start button hotspot (ONLY clickable area on Screen 4) */
+    .start-hotspot{
+      left:70.5%;
+      top:74.0%;
+      width:16.0%;
+      height:11.0%;
+      cursor:pointer;
+    }
+
+    /* Model Modal (opens ONLY when Start is clicked) */
+    .model-modal{
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      background:rgba(0,0,0,.65);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .22s ease;
+      z-index:999;
+    }
+    .model-modal.is-open{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .model-modal__box{
+      width:min(1100px, 96vw);
+      height:min(720px, 86vh);
+      background:#fff;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:0 18px 40px rgba(0,0,0,.30);
+      position:relative;
+    }
+    .model-modal__box model-viewer{
+      width:100%;
+      height:100%;
+      display:block;
+      background:#fff;
+    }
+    .mv-loader{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      font-size:18px;
+      color:#222;
+      background:#fff;
+      z-index:4;
+    }
+    .mv-error{
+      position:absolute;
+      left:16px;
+      right:16px;
+      bottom:16px;
+      z-index:6;
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(255,0,0,.08);
+      border:1px solid rgba(255,0,0,.25);
+      color:#8a0000;
+      font-weight:700;
+      display:none;
+    }
+
+  </style>
+</head>
+
+<body>
+  <!-- Screen 1: Logo splash (2 seconds) -->
+  <div id="screen1" class="screen is-active" aria-label="Splash screen">
+    <div class="screen__frame" style="--ratio: 0.430175781250;">
+      <img src="assets/screen1.png" alt="Kamayogi Digital Learning Lab" />
+    </div>
+  </div>
+
+  <!-- Screen 2: Introduction (ONLY Next is clickable) -->
+  <div id="screen2" class="screen" aria-label="Introduction screen">
+    <div class="screen__frame" style="--ratio: 0.461425781250;">
+      <img src="assets/screen2.png" alt="Introduction" />
+      <button id="nextBtn" class="hotspot next-hotspot" type="button" aria-label="Next"></button>
+    </div>
+  </div>
+
+  <!-- Screen 3: Course scenarios (ONLY Land Ceiling Framework is clickable) -->
+  <div id="screen3" class="screen" aria-label="Course scenarios">
+    <div class="screen__frame" style="--ratio: 0.461425781250;">
+      <img src="assets/screen3.png" alt="Course scenarios" />
+      <button id="lcfBtn" class="hotspot lcf-hotspot" type="button" aria-label="Land Ceiling Framework"></button>
+      <!-- NOTE: No other hotspots here on purpose (other cards stay disabled). -->
+    </div>
+  </div>
+
+  <!-- Screen 4: Scenario details (no buttons enabled yet) -->
+  <div id="screen4" class="screen" aria-label="Scenario details">
+    <div class="screen__frame" style="--ratio: 2.169491525424;">
+      <img src="assets/screen4.png" alt="Scenario details" />
+            <button id="startBtn" class="hotspot start-hotspot" type="button" aria-label="Start"></button>
+<!-- NOTE: Intentionally no click events here as requested. -->
+    </div>
+  </div>
+
+
+  <!-- Model Modal (opens ONLY when Start is clicked) -->
+  <div id="modelModal" class="model-modal" aria-hidden="true">
+    <div class="model-modal__box" role="dialog" aria-modal="true" aria-label="3D Model">
+      <div id="mvLoader" class="mv-loader">Loading 3D model…</div>
+      <div id="mvError" class="mv-error"></div>
+
+      <!-- Note: src is set on Start click (not before) -->
+      <model-viewer
+        id="mvModal"
+        src=""
+        alt="Terrain 3D model"
+        camera-controls
+        touch-action="none"
+        shadow-intensity="1"
+        exposure="1"
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        ar-placement="floor"
+        ar-scale="auto"
+        interaction-prompt="none"
+      >
+      </model-viewer>
+    </div>
+  </div>
+
+
+  <script>
+    (function(){
+
+      var s1 = document.getElementById('screen1');
+      var s2 = document.getElementById('screen2');
+      var s3 = document.getElementById('screen3');
+      var s4 = document.getElementById('screen4');
+
+      var nextBtn = document.getElementById('nextBtn');
+      var lcfBtn  = document.getElementById('lcfBtn');
+      var startBtn = document.getElementById('startBtn');
+
+      function showScreen(showEl){
+        // Hide all
+        [s1,s2,s3,s4].forEach(function(el){ el.classList.remove('is-active'); });
+        // Show one
+        showEl.classList.add('is-active');
+      }
+
+      // Screen 1 -> Screen 2 after 2 seconds
+      window.addEventListener('load', function(){
+        setTimeout(function(){
+          showScreen(s2);
+        }, 2000);
+      });
+
+      // Screen 2: ONLY Next button works
+      nextBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        showScreen(s3); // ✅ Load Screen 3
+      });
+
+      // Screen 3: ONLY Land Ceiling Framework card works
+      lcfBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        showScreen(s4); // ✅ Load Screen 4
+      });
+
+// Screen 4: ONLY Start button works (opens modal + loads model from /models)
+// Screen 4: ONLY Start button works (opens modal + loads models/terrain.glb)
+startBtn.addEventListener('click', function(e){
+  e.preventDefault();
+  e.stopPropagation();
+
+  var modelModal = document.getElementById('modelModal');
+  var mv = document.getElementById('mvModal');
+  var loader = document.getElementById('mvLoader');
+  var errBox = document.getElementById('mvError');
+
+  if (!modelModal) return;
+
+  // Open modal immediately (no other clicks are enabled)
+  modelModal.classList.add('is-open');
+  modelModal.setAttribute('aria-hidden','false');
+
+  if (loader) loader.style.display = 'flex';
+  if (errBox) errBox.style.display = 'none';
+
+  // Wait for model-viewer to be available (and try multiple CDNs if needed)
+  function ensureModelViewerLoaded(timeoutMs){
+    timeoutMs = timeoutMs || 15000;
+
+    if (window.customElements && customElements.get('model-viewer')) {
+      return Promise.resolve(true);
+    }
+
+    var sources = [
+      'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js',
+      'https://cdn.jsdelivr.net/npm/@google/model-viewer/dist/model-viewer.min.js',
+      'https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js'
+    ];
+
+    function inject(src){
+      if (document.querySelector('script[data-mv-src="'+src+'"]')) return;
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src = src;
+      s.setAttribute('data-mv-src', src);
+      document.head.appendChild(s);
+    }
+
+    // inject first immediately
+    inject(sources[0]);
+
+    return new Promise(function(resolve){
+      var startTime = Date.now();
+      var injectedIndex = 0;
+
+      (function tick(){
+        if (window.customElements && customElements.get('model-viewer')) return resolve(true);
+
+        var elapsed = Date.now() - startTime;
+
+        // every ~2500ms, try the next CDN if still not loaded
+        if (elapsed > (injectedIndex + 1) * 2500 && injectedIndex < sources.length - 1){
+          injectedIndex += 1;
+          inject(sources[injectedIndex]);
+        }
+
+        if (elapsed > timeoutMs) return resolve(false);
+        setTimeout(tick, 120);
+      })();
+    });
+  }
+
+  ensureModelViewerLoaded(15000).then(function(ok){
+    if (!ok){
+      if (loader) loader.style.display = 'none';
+      if (errBox){
+        errBox.style.display = 'block';
+        // Helpful hint if user is opening file directly
+        var proto = (location && location.protocol) ? location.protocol : '';
+        var hint = (proto === 'file:') 
+          ? 'You are opening index.html directly. Please run via a local server (http://localhost:8000).'
+          : 'Please ensure internet is available. Some networks block CDNs; try another network/hotspot.';
+        errBox.textContent = 'model-viewer library not loaded. ' + hint;
+      }
+      return;
+    }
+
+    // Load model ONLY from existing "models" folder (small m)
+    if (mv) {
+      // force reload
+      mv.setAttribute('src', '');
+      mv.setAttribute('src', 'models/terrain.glb');
+
+      mv.addEventListener('load', function(){
+        if (loader) loader.style.display = 'none';
+      }, { once:true });
+
+      mv.addEventListener('error', function(){
+        if (loader) loader.style.display = 'none';
+        if (errBox){
+          errBox.style.display = 'block';
+          errBox.textContent = 'Model not loading from models/terrain.glb. Please confirm the file exists and run using a local server.';
+        }
+      }, { once:true });
+    } else {
+      if (loader) loader.style.display = 'none';
+    }
+  });
+});
+    })();
+  </script>
+</body>
+</html>

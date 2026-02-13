@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Open Terrain in AR</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <style>
+    :root{ --accent:#40cbcb; }
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#fff;}
+    .wrap{height:100%;display:flex;align-items:center;justify-content:center;padding:20px;}
+    .box{width:min(520px,100%);border:1px solid #eee;border-radius:18px;padding:18px;box-shadow:0 10px 25px rgba(0,0,0,.06)}
+    h2{margin:0 0 8px;font-size:20px}
+    p{margin:0 0 14px;color:#666;line-height:1.4}
+    button{padding:12px 16px;font-size:16px;border-radius:14px;border:0;background:var(--accent);color:#fff;font-weight:800;cursor:pointer}
+    .status{margin-top:12px;color:#111;font-size:13px}
+    /* Keep model-viewer hidden but loaded */
+    model-viewer{position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="box">
+      <h2>Open Terrain in AR</h2>
+      <p>iPhone/Android security ki wajah se AR open karne ke liye <b>1 tap</b> zaroori hota hai.</p>
+      <button id="open">Open AR</button>
+      <div class="status" id="status"></div>
+      <div class="status" style="margin-top:10px;"><a href="/" style="color:#111">← Back to home</a></div>
+    </div>
+  </div>
+
+  <model-viewer
+    id="mv"
+    src="models/terrain.glb"
+    alt="Terrain model"
+    ar
+    ar-modes="webxr scene-viewer quick-look"
+    ar-placement="floor"
+    ar-scale="auto"
+    interaction-prompt="none"
+  ></model-viewer>
+
+  <script>
+    (function(){
+      var mv = document.getElementById('mv');
+      var btn = document.getElementById('open');
+      var status = document.getElementById('status');
+
+      function setStatus(t){ status.textContent = t || ''; }
+
+      async function openAR(){
+        try{
+          setStatus('Preparing AR…');
+          // Wait until model is ready (important on iOS)
+          if (!mv.loaded) {
+            await mv.updateComplete;
+          }
+          await mv.activateAR();
+          setStatus('');
+        } catch (e) {
+          console.log(e);
+          setStatus('AR open nahi hua. In-app browser ho to Safari/Chrome me open karke try karo.');
+        }
+      }
+
+      btn.addEventListener('click', openAR);
+
+      // Optional: auto-attempt once (may be blocked without user gesture)
+      setTimeout(function(){
+        try { /* no-op */ } catch(e){}
+      }, 300);
+    })();
+  </script>
+</body>
+</html>

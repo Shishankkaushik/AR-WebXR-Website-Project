@@ -88,6 +88,11 @@
     }
   
     /* Screen 4: Start button hotspot (ONLY clickable area on Screen 4) */
+
+    /* Screen 4: make everything non-clickable except Start hotspot */
+    #screen4 .screen__frame img{
+      pointer-events:none;
+    }
     .start-hotspot{
       left:70.5%;
       top:74.0%;
@@ -103,8 +108,8 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:16px;
-      background:rgba(0,0,0,.65);
+      padding:0;
+      background:#fff;
       opacity:0;
       pointer-events:none;
       transition:opacity .22s ease;
@@ -115,12 +120,12 @@
       pointer-events:auto;
     }
     .model-modal__box{
-      width:min(1100px, 96vw);
-      height:min(720px, 86vh);
+      width:100vw;
+      height:100vh;
       background:#fff;
-      border-radius:18px;
+      border-radius:0;
       overflow:hidden;
-      box-shadow:0 18px 40px rgba(0,0,0,.30);
+      box-shadow:none;
       position:relative;
     }
     .model-modal__box model-viewer{
@@ -155,6 +160,228 @@
       font-weight:700;
       display:none;
     }
+
+    /* UI 5 & UI 6 overlays (shown on top of the 3D model modal) */
+    .ui-overlay{
+      position:fixed;
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none; /* allow model interaction through the UI */
+      transition:opacity .22s ease;
+    }
+    .ui-overlay.is-visible{
+      opacity:1;
+      visibility:visible;
+    }
+    .ui-overlay img{
+      width:100%;
+      height:auto;
+      display:block;
+      user-select:none;
+      -webkit-user-drag:none;
+    }
+
+    /* UI 5 (orange stack) -> middle-left */
+    #ui5Overlay{
+      left:max(12px, 2vw);
+      top:50%;
+      transform:translateY(-50%);
+      width:clamp(190px, 24vw, 360px);
+      z-index:1005;
+    }
+
+    #ui5Overlay .ui5-wrap{ position:relative; }
+
+    /* UI5: ONLY 1976 becomes clickable when enabled */
+    #ui5Btn1976{
+      position:absolute;
+      left:6.9%;
+      top:2.8%;
+      width:86.0%;
+      height:14.6%;
+      background:transparent;
+      border:0;
+      padding:0;
+      cursor:pointer;
+      pointer-events:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #ui5Btn1976.is-enabled{ pointer-events:auto; }
+    #ui5Btn1976:focus-visible{
+      outline:3px solid rgba(255,255,255,.85);
+      outline-offset:2px;
+      border-radius:12px;
+    }
+
+    /* UI 6 (blue info bar) -> bottom-center */
+    #ui6Overlay{
+      left:50%;
+      bottom:max(12px, 2vh);
+      transform:translateX(-50%);
+      width:min(92vw, 980px);
+      z-index:1006;
+    }
+    #ui6Overlay .ui6-wrap{
+      position:relative;
+      width:100%;
+      height:auto;
+    }
+    /* ONLY the ">" area is clickable */
+    #ui6NextBtn{
+      position:absolute;
+      left:73%;
+      top:18%;
+      width:25%;
+      height:64%;
+      background:transparent;
+      border:0;
+      padding:0;
+      cursor:pointer;
+      pointer-events:none;
+            -webkit-tap-highlight-color: transparent;
+    }
+    #ui6Overlay.is-visible #ui6NextBtn{
+      pointer-events:auto;
+    }
+    #ui6NextBtn:focus-visible{
+      outline:3px solid rgba(255,255,255,.85);
+      outline-offset:2px;
+      border-radius:12px;
+    }
+
+/* UI 7 (instruction bar) -> EXACT same position as UI6 (bottom-center) */
+#ui7Overlay{
+  left:50%;
+  bottom:max(12px, 2vh);
+  transform:translateX(-50%);
+  width:min(92vw, 980px);
+  z-index:1007;
+}
+#ui7Overlay .ui7-wrap{
+  position:relative;
+  width:100%;
+  height:auto;
+}
+
+/* UI 8 & UI 9 (full-screen steps over the model). They block all clicks except their buttons. */
+.ui-fullscreen{
+  inset:0;
+  left:0; right:0; top:0; bottom:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+}
+
+/* override .ui-overlay img for full-screen steps */
+.ui-fullscreen .ui-frame{
+  position:relative;
+  width:min(100vw, calc(100vh * var(--ratio)));
+  height:min(100vh, calc(100vw / var(--ratio)));
+}
+.ui-fullscreen .ui-frame img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+
+/* When visible, UI8/UI9 must block all clicks on the model */
+#ui8Overlay.is-visible,
+#ui9Overlay.is-visible,
+#ui10Overlay.is-visible,
+#ui11Overlay.is-visible{
+  pointer-events:auto;
+}
+
+#ui8Overlay{ z-index:1010; }
+#ui9Overlay{ z-index:1011; }
+#ui10Overlay{ z-index:1012; }
+#ui11Overlay{ z-index:1013; }
+
+/* Top-right meter card (non-clickable) */
+#meterOverlay{
+  right:max(12px, 2vw);
+  top:max(12px, 2vh);
+  width:min(46vw, 520px);
+  z-index:1004;
+}
+
+/* UI 8: ONLY Next button clickable */
+#ui8NextBtn{
+  position:absolute;
+  left:67%;
+  top:61%;
+  width:30%;
+  height:28%;
+  background:transparent;
+  border:0;
+  padding:0;
+  cursor:pointer;
+  pointer-events:auto;
+  -webkit-tap-highlight-color: transparent;
+}
+#ui8NextBtn:focus-visible{
+  outline:3px solid rgba(255,255,255,.85);
+  outline-offset:2px;
+  border-radius:12px;
+}
+
+/* UI 9: ONLY Yes & No buttons clickable */
+#ui9YesBtn,
+#ui9NoBtn{
+  position:absolute;
+  background:transparent;
+  border:0;
+  padding:0;
+  cursor:pointer;
+  pointer-events:auto;
+  -webkit-tap-highlight-color: transparent;
+}
+#ui9YesBtn{
+  left:12%;
+  top:49%;
+  width:38%;
+  height:30%;
+}
+#ui9NoBtn{
+  left:54%;
+  top:49%;
+  width:38%;
+  height:30%;
+}
+#ui9YesBtn:focus-visible,
+#ui9NoBtn:focus-visible{
+  outline:3px solid rgba(255,255,255,.85);
+  outline-offset:2px;
+  border-radius:12px;
+}
+
+/* UI 11: ONLY Try Again button clickable */
+#ui11TryAgainBtn{
+  position:absolute;
+  left:36.2%;
+  top:64.3%;
+  width:29.4%;
+  height:17.0%;
+  background:transparent;
+  border:0;
+  padding:0;
+  cursor:pointer;
+  pointer-events:auto;
+  -webkit-tap-highlight-color: transparent;
+}
+#ui11TryAgainBtn:focus-visible{
+  outline:3px solid rgba(255,255,255,.85);
+  outline-offset:2px;
+  border-radius:12px;
+}
+
+
+  
 
   </style>
 </head>
@@ -219,152 +446,403 @@
     </div>
   </div>
 
+  <!-- UI 5: Orange option stack (middle-left, non-clickable) -->
+  <div id="ui5Overlay" class="ui-overlay" aria-hidden="true">
+    <div class="ui5-wrap">
+      <img src="assets/screen5.png" alt="" />
+      <button id="ui5Btn1976" type="button" aria-label="1976"></button>
+    </div>
+  </div>
 
-  <script>
-    (function(){
+  <!-- UI 6: Blue info bar (bottom-center, ONLY '>' is clickable) -->
+  <div id="ui6Overlay" class="ui-overlay" aria-hidden="true">
+    <div class="ui6-wrap">
+      <img src="assets/screen6.png" alt="" />
+      <button id="ui6NextBtn" type="button" aria-label="Next"></button>
+    </div>
+  </div>
 
-      var s1 = document.getElementById('screen1');
-      var s2 = document.getElementById('screen2');
-      var s3 = document.getElementById('screen3');
-      var s4 = document.getElementById('screen4');
+  <!-- UI 7: Instruction bar (replaces UI6). ONLY '>' is clickable. -->
+<div id="ui7Overlay" class="ui-overlay" aria-hidden="true">
+  <div class="ui7-wrap">
+    <img src="assets/screen7.png" alt="" />
+</div>
+</div>
 
-      var nextBtn = document.getElementById('nextBtn');
-      var lcfBtn  = document.getElementById('lcfBtn');
-      var startBtn = document.getElementById('startBtn');
+<!-- UI 8: Full-screen record details (ONLY Next button is clickable) -->
+<div id="ui8Overlay" class="ui-overlay ui-fullscreen" aria-hidden="true">
+  <div class="ui-frame" style="--ratio: 1.965451057;">
+    <img src="assets/screen8.png" alt="" />
+    <button id="ui8NextBtn" type="button" aria-label="Next"></button>
+  </div>
+</div>
 
-      function showScreen(showEl){
-        // Hide all
-        [s1,s2,s3,s4].forEach(function(el){ el.classList.remove('is-active'); });
-        // Show one
-        showEl.classList.add('is-active');
+<!-- UI 9: Full-screen question (ONLY Yes/No buttons are clickable) -->
+<div id="ui9Overlay" class="ui-overlay ui-fullscreen" aria-hidden="true">
+  <div class="ui-frame" style="--ratio: 2.203444564;">
+    <img src="assets/screen9.png" alt="" />
+    <button id="ui9YesBtn" type="button" aria-label="Yes"></button>
+    <button id="ui9NoBtn" type="button" aria-label="No"></button>
+  </div>
+</div>
+
+<!-- UI 10: Full-screen follow-up (shown after clicking NO). No clickable elements. -->
+<div id="ui10Overlay" class="ui-overlay ui-fullscreen" aria-hidden="true">
+  <div class="ui-frame" style="--ratio: 2.201834862;">
+    <img src="assets/screen10.png" alt="" />
+  </div>
+</div>
+
+<!-- Top-right meter card (non-clickable, shown with the model overlays) -->
+<div id="meterOverlay" class="ui-overlay" aria-hidden="true">
+  <img src="assets/checkbox_card.png" alt="" />
+</div>
+
+<!-- UI 11: Full-screen follow-up (shown after clicking YES on UI9). ONLY Try Again is clickable. -->
+<div id="ui11Overlay" class="ui-overlay ui-fullscreen" aria-hidden="true">
+  <div class="ui-frame" style="--ratio: 2.204520990;">
+    <img src="assets/screen11.png" alt="" />
+    <button id="ui11TryAgainBtn" type="button" aria-label="Try Again"></button>
+  </div>
+</div>
+
+
+<script>
+  (function(){
+    var s1 = document.getElementById('screen1');
+    var s2 = document.getElementById('screen2');
+    var s3 = document.getElementById('screen3');
+    var s4 = document.getElementById('screen4');
+
+    var nextBtn  = document.getElementById('nextBtn');
+    var lcfBtn   = document.getElementById('lcfBtn');
+    var startBtn = document.getElementById('startBtn');
+
+    var ui5Overlay = document.getElementById('ui5Overlay');
+    var ui6Overlay = document.getElementById('ui6Overlay');
+    var ui7Overlay = document.getElementById('ui7Overlay');
+    var ui8Overlay = document.getElementById('ui8Overlay');
+
+    var ui9Overlay = document.getElementById('ui9Overlay');
+    var ui10Overlay = document.getElementById('ui10Overlay');
+    var ui11Overlay = document.getElementById('ui11Overlay');
+    var meterOverlay = document.getElementById('meterOverlay');
+
+    var ui6NextBtn = document.getElementById('ui6NextBtn');
+    var ui8NextBtn = document.getElementById('ui8NextBtn');
+
+    var ui5Btn1976 = document.getElementById('ui5Btn1976');
+
+    var ui9YesBtn = document.getElementById('ui9YesBtn');
+    var ui9NoBtn  = document.getElementById('ui9NoBtn');
+    var ui11TryAgainBtn = document.getElementById('ui11TryAgainBtn');
+
+    var tShowUI6 = null;
+    var tAutoUI7 = null;
+
+    function setVisible(el, visible){
+      if (!el) return;
+      if (visible){
+        el.classList.add('is-visible');
+        el.setAttribute('aria-hidden', 'false');
+      } else {
+        el.classList.remove('is-visible');
+        el.setAttribute('aria-hidden', 'true');
       }
+    }
 
-      // Screen 1 -> Screen 2 after 2 seconds
-      window.addEventListener('load', function(){
-        setTimeout(function(){
-          showScreen(s2);
-        }, 2000);
+    function disable1976(){
+      if (ui5Btn1976) ui5Btn1976.classList.remove('is-enabled');
+    }
+
+    function enable1976Only(){
+      if (ui5Btn1976) ui5Btn1976.classList.add('is-enabled');
+    }
+
+    function clearTimers(){
+      if (tShowUI6) { clearTimeout(tShowUI6); tShowUI6 = null; }
+      if (tAutoUI7) { clearTimeout(tAutoUI7); tAutoUI7 = null; }
+    }
+
+    function transitionToUI7(){
+      // UI6 -> UI7 (same position)
+      setVisible(ui6Overlay, false);
+      setVisible(ui8Overlay, false);
+      setVisible(ui9Overlay, false);
+      setVisible(ui10Overlay, false);
+      setVisible(ui11Overlay, false);
+      setVisible(ui7Overlay, true);
+      // ✅ As soon as UI7 is shown, enable ONLY the 1976 button on UI5
+      enable1976Only();
+      if (tAutoUI7) { clearTimeout(tAutoUI7); tAutoUI7 = null; }
+    }
+
+    function showUI8(){
+      // UI7 -> UI8 (full-screen). ONLY Next is clickable.
+      setVisible(ui6Overlay, false);
+      setVisible(ui7Overlay, false);
+      setVisible(ui9Overlay, false);
+      setVisible(ui10Overlay, false);
+      setVisible(ui11Overlay, false);
+      setVisible(ui8Overlay, true);
+      disable1976();
+    }
+
+    function showUI9(){
+      // UI8 -> UI9 (full-screen). ONLY Yes/No are clickable.
+      setVisible(ui6Overlay, false);
+      setVisible(ui7Overlay, false);
+      setVisible(ui8Overlay, false);
+      setVisible(ui9Overlay, true);
+      setVisible(ui10Overlay, false);
+      setVisible(ui11Overlay, false);
+      disable1976();
+    }
+
+    function showUI10(){
+      // UI9 -> UI10 (full-screen). No clickable elements.
+      setVisible(ui6Overlay, false);
+      setVisible(ui7Overlay, false);
+      setVisible(ui8Overlay, false);
+      setVisible(ui9Overlay, false);
+      setVisible(ui11Overlay, false);
+      setVisible(ui10Overlay, true);
+      disable1976();
+    }
+
+    function showUI11(){
+      // UI9 -> UI11 (full-screen). ONLY Try Again is clickable.
+      setVisible(ui6Overlay, false);
+      setVisible(ui7Overlay, false);
+      setVisible(ui8Overlay, false);
+      setVisible(ui9Overlay, false);
+      setVisible(ui10Overlay, false);
+      setVisible(ui11Overlay, true);
+      disable1976();
+    }
+
+    function showModelOverlays(){
+      clearTimers();
+
+      // UI5 stays visible always
+      setVisible(ui5Overlay, true);
+      // Top-right meter card stays visible with model flow
+      setVisible(meterOverlay, true);
+
+      // Ensure UI6/UI7/UI8 are hidden at start
+      setVisible(ui6Overlay, false);
+      setVisible(ui7Overlay, false);
+      setVisible(ui8Overlay, false);
+      setVisible(ui9Overlay, false);
+      setVisible(ui10Overlay, false);
+      setVisible(ui11Overlay, false);
+
+      // 1976 is NOT clickable until UI7 is shown
+      disable1976();
+
+      // Show UI6 after 2 seconds (stays visible until user clicks '>')
+      tShowUI6 = setTimeout(function(){
+        setVisible(ui6Overlay, true);
+      }, 2000);
+    }
+
+    function showScreen(showEl){
+      [s1,s2,s3,s4].forEach(function(el){
+        if (el) el.classList.remove('is-active');
       });
+      if (showEl) showEl.classList.add('is-active');
+    }
 
-      // Screen 2: ONLY Next button works
+    // Screen 1 -> Screen 2 after 2 seconds
+    window.addEventListener('load', function(){
+      setTimeout(function(){
+        showScreen(s2);
+      }, 2000);
+    });
+
+    // Screen 2: ONLY Next
+    if (nextBtn){
       nextBtn.addEventListener('click', function(e){
         e.preventDefault();
         e.stopPropagation();
-        showScreen(s3); // ✅ Load Screen 3
+        showScreen(s3);
       });
+    }
 
-      // Screen 3: ONLY Land Ceiling Framework card works
+    // Screen 3: ONLY Land Ceiling Framework
+    if (lcfBtn){
       lcfBtn.addEventListener('click', function(e){
         e.preventDefault();
         e.stopPropagation();
-        showScreen(s4); // ✅ Load Screen 4
+        showScreen(s4);
       });
-
-// Screen 4: ONLY Start button works (opens modal + loads model from /models)
-// Screen 4: ONLY Start button works (opens modal + loads models/terrain.glb)
-startBtn.addEventListener('click', function(e){
-  e.preventDefault();
-  e.stopPropagation();
-
-  var modelModal = document.getElementById('modelModal');
-  var mv = document.getElementById('mvModal');
-  var loader = document.getElementById('mvLoader');
-  var errBox = document.getElementById('mvError');
-
-  if (!modelModal) return;
-
-  // Open modal immediately (no other clicks are enabled)
-  modelModal.classList.add('is-open');
-  modelModal.setAttribute('aria-hidden','false');
-
-  if (loader) loader.style.display = 'flex';
-  if (errBox) errBox.style.display = 'none';
-
-  // Wait for model-viewer to be available (and try multiple CDNs if needed)
-  function ensureModelViewerLoaded(timeoutMs){
-    timeoutMs = timeoutMs || 15000;
-
-    if (window.customElements && customElements.get('model-viewer')) {
-      return Promise.resolve(true);
     }
 
-    var sources = [
-      'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js',
-      'https://cdn.jsdelivr.net/npm/@google/model-viewer/dist/model-viewer.min.js',
-      'https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js'
-    ];
+    // Screen 4: ONLY Start -> full-screen model + hide Screen 4 + overlays
+    if (startBtn){
+      startBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
 
-    function inject(src){
-      if (document.querySelector('script[data-mv-src="'+src+'"]')) return;
-      var s = document.createElement('script');
-      s.type = 'module';
-      s.src = src;
-      s.setAttribute('data-mv-src', src);
-      document.head.appendChild(s);
-    }
+        var modelModal = document.getElementById('modelModal');
+        var mv = document.getElementById('mvModal');
+        var loader = document.getElementById('mvLoader');
+        var errBox = document.getElementById('mvError');
 
-    // inject first immediately
-    inject(sources[0]);
+        if (!modelModal) return;
 
-    return new Promise(function(resolve){
-      var startTime = Date.now();
-      var injectedIndex = 0;
+        // Hide UI Screen 4 as soon as Start is clicked
+        if (s4) s4.classList.remove('is-active');
 
-      (function tick(){
-        if (window.customElements && customElements.get('model-viewer')) return resolve(true);
+        // Open modal (full-screen)
+        modelModal.classList.add('is-open');
+        modelModal.setAttribute('aria-hidden','false');
 
-        var elapsed = Date.now() - startTime;
+        // Show overlays with required timings
+        showModelOverlays();
 
-        // every ~2500ms, try the next CDN if still not loaded
-        if (elapsed > (injectedIndex + 1) * 2500 && injectedIndex < sources.length - 1){
-          injectedIndex += 1;
-          inject(sources[injectedIndex]);
+        if (loader) loader.style.display = 'flex';
+        if (errBox) errBox.style.display = 'none';
+
+        function ensureModelViewerLoaded(timeoutMs){
+          timeoutMs = timeoutMs || 15000;
+
+          if (window.customElements && customElements.get('model-viewer')) {
+            return Promise.resolve(true);
+          }
+
+          var sources = [
+            'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js',
+            'https://cdn.jsdelivr.net/npm/@google/model-viewer/dist/model-viewer.min.js',
+            'https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js'
+          ];
+
+          function inject(src){
+            if (document.querySelector('script[data-mv-src="'+src+'"]')) return;
+            var s = document.createElement('script');
+            s.type = 'module';
+            s.src = src;
+            s.setAttribute('data-mv-src', src);
+            document.head.appendChild(s);
+          }
+
+          inject(sources[0]);
+
+          return new Promise(function(resolve){
+            var startTime = Date.now();
+            var injectedIndex = 0;
+
+            (function tick(){
+              if (window.customElements && customElements.get('model-viewer')) return resolve(true);
+
+              var elapsed = Date.now() - startTime;
+
+              if (elapsed > (injectedIndex + 1) * 2500 && injectedIndex < sources.length - 1){
+                injectedIndex += 1;
+                inject(sources[injectedIndex]);
+              }
+
+              if (elapsed > timeoutMs) return resolve(false);
+              setTimeout(tick, 120);
+            })();
+          });
         }
 
-        if (elapsed > timeoutMs) return resolve(false);
-        setTimeout(tick, 120);
-      })();
-    });
-  }
+        ensureModelViewerLoaded(15000).then(function(ok){
+          if (!ok){
+            if (loader) loader.style.display = 'none';
+            if (errBox){
+              errBox.style.display = 'block';
+              var proto = (location && location.protocol) ? location.protocol : '';
+              var hint = (proto === 'file:')
+                ? 'You are opening index.html directly. Please run via a local server (http://localhost:8000).'
+                : 'Please ensure internet is available. Some networks block CDNs; try another network/hotspot.';
+              errBox.textContent = 'model-viewer library not loaded. ' + hint;
+            }
+            return;
+          }
 
-  ensureModelViewerLoaded(15000).then(function(ok){
-    if (!ok){
-      if (loader) loader.style.display = 'none';
-      if (errBox){
-        errBox.style.display = 'block';
-        // Helpful hint if user is opening file directly
-        var proto = (location && location.protocol) ? location.protocol : '';
-        var hint = (proto === 'file:') 
-          ? 'You are opening index.html directly. Please run via a local server (http://localhost:8000).'
-          : 'Please ensure internet is available. Some networks block CDNs; try another network/hotspot.';
-        errBox.textContent = 'model-viewer library not loaded. ' + hint;
-      }
-      return;
+          // Load model from models/terrain.glb
+          if (mv) {
+            mv.setAttribute('src', '');
+            mv.setAttribute('src', 'models/terrain.glb');
+
+            mv.addEventListener('load', function(){
+              if (loader) loader.style.display = 'none';
+            }, { once:true });
+
+            mv.addEventListener('error', function(){
+              if (loader) loader.style.display = 'none';
+              if (errBox){
+                errBox.style.display = 'block';
+                errBox.textContent = 'Model not loading from models/terrain.glb. Please confirm the file exists and run using a local server.';
+              }
+            }, { once:true });
+          } else {
+            if (loader) loader.style.display = 'none';
+          }
+        });
+      });
     }
 
-    // Load model ONLY from existing "models" folder (small m)
-    if (mv) {
-      // force reload
-      mv.setAttribute('src', '');
-      mv.setAttribute('src', 'models/terrain.glb');
-
-      mv.addEventListener('load', function(){
-        if (loader) loader.style.display = 'none';
-      }, { once:true });
-
-      mv.addEventListener('error', function(){
-        if (loader) loader.style.display = 'none';
-        if (errBox){
-          errBox.style.display = 'block';
-          errBox.textContent = 'Model not loading from models/terrain.glb. Please confirm the file exists and run using a local server.';
-        }
-      }, { once:true });
-    } else {
-      if (loader) loader.style.display = 'none';
+    // UI6: '>' click -> hide UI6 and show UI7 in SAME position
+    if (ui6NextBtn){
+      ui6NextBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if (tAutoUI7) { clearTimeout(tAutoUI7); tAutoUI7 = null; }
+        transitionToUI7();
+      });
     }
-  });
-});
-    })();
-  </script>
+
+    // UI8: Next click -> hide UI8 and show UI9
+    if (ui8NextBtn){
+      ui8NextBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        showUI9();
+      });
+    }
+
+    // UI9: Yes/No clicks (both clickable; no other elements clickable)
+    if (ui9YesBtn){
+      ui9YesBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        showUI11();
+      });
+    }
+    if (ui9NoBtn){
+      ui9NoBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        showUI10();
+      });
+    }
+
+    // UI11: Try Again -> switch to UI9
+    if (ui11TryAgainBtn){
+      ui11TryAgainBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        showUI9();
+      });
+    }
+
+
+    // UI5: 1976 hotspot (enabled as soon as UI7 is shown)
+    if (ui5Btn1976){
+      ui5Btn1976.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        // Only works when enabled (UI7 visible)
+        if (!ui5Btn1976.classList.contains('is-enabled')) return;
+        showUI8();
+      });
+    }
+
+  })();
+</script>
+
 </body>
 </html>

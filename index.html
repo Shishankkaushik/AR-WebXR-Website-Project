@@ -207,7 +207,25 @@
       -webkit-tap-highlight-color: transparent;
     }
     #ui5Btn1976.is-enabled{ pointer-events:auto; }
-    #ui5Btn1976:focus-visible{
+
+    /* UI5: Vest button becomes clickable later (after Screen 15 shows) */
+    #ui5BtnVest{
+      position:absolute;
+      left:6.9%;
+      top:54.17%;
+      width:86.13%;
+      height:14.58%;
+      background:transparent;
+      border:0;
+      padding:0;
+      cursor:pointer;
+      pointer-events:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #ui5BtnVest.is-enabled{ pointer-events:auto; }
+
+    #ui5Btn1976:focus-visible,
+    #ui5BtnVest:focus-visible{
       outline:3px solid rgba(255,255,255,.85);
       outline-offset:2px;
       border-radius:12px;
@@ -309,6 +327,82 @@
   width:min(46vw, 520px);
   z-index:1004;
 }
+#meterOverlay .meter-card-wrap{
+  position:relative;
+  width:100%;
+}
+#meterOverlay .meter-card-wrap > img{
+  display:block;
+  width:100%;
+  height:auto;
+}
+#meterAnimLayer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:0;
+}
+#meterAnimLayer.is-active{
+  opacity:1;
+}
+#meterAnimLayer .meter-seg{
+  position:absolute;
+  top:57.14%;
+  height:11.31%;
+  background:linear-gradient(to bottom, rgba(255,255,255,.95), rgba(240,240,240,.95));
+  opacity:0;
+  border-radius:1px;
+  box-shadow:0 0 6px rgba(255,255,255,.35);
+  transform-origin:center bottom;
+}
+#meterAnimLayer .meter-seg.is-on{
+  opacity:1;
+  animation: meterSegPop .25s ease-out;
+}
+#meterAnimLayer .meter-needle-pulse{
+  position:absolute;
+  left:47.8%;
+  top:55.4%;
+  width:3.2%;
+  aspect-ratio:1/1;
+  border-radius:50%;
+  transform:translate(-50%, -50%);
+  border:2px solid rgba(255,255,255,.95);
+  box-shadow:0 0 10px rgba(255,255,255,.45);
+  opacity:0;
+}
+#meterAnimLayer.is-running .meter-needle-pulse{
+  animation: meterNeedlePulse .9s ease-out 0s 3;
+}
+#meterAnimLayer .meter-sweep{
+  position:absolute;
+  left:56%;
+  top:52%;
+  width:20%;
+  height:22%;
+  transform:skewX(-18deg) translateX(-40%);
+  background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.65), rgba(255,255,255,0));
+  opacity:0;
+  filter:blur(1px);
+}
+#meterAnimLayer.is-running .meter-sweep{
+  animation: meterSweep 1.2s ease-in-out 1;
+}
+@keyframes meterSegPop{
+  0%{ transform:scaleY(.4); opacity:.25; }
+  70%{ transform:scaleY(1.08); opacity:1; }
+  100%{ transform:scaleY(1); opacity:1; }
+}
+@keyframes meterNeedlePulse{
+  0%{ opacity:.9; transform:translate(-50%, -50%) scale(.45); }
+  100%{ opacity:0; transform:translate(-50%, -50%) scale(2.6); }
+}
+@keyframes meterSweep{
+  0%{ opacity:0; transform:skewX(-18deg) translateX(-60%); }
+  15%{ opacity:.75; }
+  85%{ opacity:.65; }
+  100%{ opacity:0; transform:skewX(-18deg) translateX(130%); }
+}
 
 /* UI 8: ONLY Next button clickable */
 #ui8NextBtn{
@@ -360,6 +454,26 @@
   border-radius:12px;
 }
 
+/* UI 10: ONLY Next button clickable */
+#ui10NextBtn{
+  position:absolute;
+  left:67.93%;
+  top:64.15%;
+  width:22.14%;
+  height:19.93%;
+  background:transparent;
+  border:0;
+  padding:0;
+  cursor:pointer;
+  pointer-events:auto;
+  -webkit-tap-highlight-color: transparent;
+}
+#ui10NextBtn:focus-visible{
+  outline:3px solid rgba(255,255,255,.85);
+  outline-offset:2px;
+  border-radius:12px;
+}
+
 /* UI 11: ONLY Try Again button clickable */
 #ui11TryAgainBtn{
   position:absolute;
@@ -383,7 +497,148 @@
 
   
 
-  </style>
+  
+
+    /* HOUSE FLOW BLINK + LABEL PATCH */
+    .house-flow-label { display:none !important; }
+
+    .house-flow-marker{
+      position:absolute;
+      left:0;
+      top:0;
+      transform:translate(-50%, -100%) translateY(-12px);
+      pointer-events:none;
+      z-index:41;
+      display:none;
+    }
+    .house-flow-marker.visible{ display:block; }
+    .house-flow-marker img{
+      display:block;
+      width:auto;
+      height:auto;
+      max-width:min(42vw, 340px);
+      user-select:none;
+      -webkit-user-drag:none;
+    }
+
+
+/* UI sequence after UI10 Next (Screen 12 -> Screen 13) */
+.house-seq-overlay{
+  position:fixed;
+  left:50%;
+  bottom:max(12px, 2vh);
+  transform:translateX(-50%);
+  width:min(96vw, 1800px);
+  max-width:1800px;
+  z-index:1014;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .2s ease;
+}
+#ui1aOverlay{
+  width:min(88vw, 1200px);
+  bottom:max(14px, 2.2vh);
+}
+#ui2aOverlay{
+  width:min(88vw, 1200px); /* balanced medium size to match Screen 12 */
+}
+#ui3aOverlay{
+  width:min(90vw, 1280px);
+}
+#ui4aOverlay{
+  width:min(88vw, 1200px);
+}
+#ui5aOverlay{
+  width:min(96vw, 1600px);
+  bottom:max(12px, 2vh);
+}
+
+.house-seq-overlay.is-visible{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+/* Non-clickable sequence screens should not block clicks to underlying UI (e.g., Vest button on UI5) */
+#ui1aOverlay.is-visible,
+#ui4aOverlay.is-visible{
+  pointer-events:none;
+}
+.house-seq-overlay .house-seq-wrap{
+  position:relative;
+  width:100%;
+}
+.house-seq-overlay img{
+  width:100%;
+  height:auto;
+  display:block;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+#ui2aNextBtn{
+  position:absolute;
+  left:82.8%;
+  top:36.0%;
+  width:10.6%;
+  height:56.0%;
+  background:transparent;
+  border:0;
+  padding:0;
+  cursor:pointer;
+  pointer-events:auto;
+  -webkit-tap-highlight-color: transparent;
+}
+#ui2aNextBtn:focus-visible{
+  outline:3px solid rgba(255,255,255,.85);
+  outline-offset:2px;
+  border-radius:12px;
+}
+
+#ui3aNextBtn{
+  position:absolute;
+  left:82.8%;
+  top:36.0%;
+  width:10.6%;
+  height:56.0%;
+  background:transparent;
+  border:0;
+  padding:0;
+  cursor:pointer;
+  pointer-events:auto;
+  -webkit-tap-highlight-color: transparent;
+}
+#ui3aNextBtn:focus-visible{
+  outline:3px solid rgba(255,255,255,.85);
+  outline-offset:2px;
+  border-radius:12px;
+}
+
+#ui4aOverlay .house-seq-wrap{ pointer-events:none; }
+
+#ui5aHomeBtn{
+  position:absolute;
+  left:68.5%;
+  top:63.5%;
+  width:25.2%;
+  height:22.8%;
+  background:transparent;
+  border:0;
+  padding:0;
+  cursor:pointer;
+  pointer-events:auto;
+  -webkit-tap-highlight-color: transparent;
+}
+#ui5aHomeBtn:focus-visible{
+  outline:3px solid rgba(255,255,255,.85);
+  outline-offset:2px;
+  border-radius:12px;
+}
+/* Screen 16 should not block other UI except Home hotspot */
+#ui5aOverlay.is-visible{ pointer-events:none; }
+#ui5aOverlay .house-seq-wrap{ pointer-events:auto; }
+
+</style>
 </head>
 
 <body>
@@ -451,6 +706,7 @@
     <div class="ui5-wrap">
       <img src="assets/screen5.png" alt="" />
       <button id="ui5Btn1976" type="button" aria-label="1976"></button>
+      <button id="ui5BtnVest" type="button" aria-label="Vest"></button>
     </div>
   </div>
 
@@ -486,16 +742,62 @@
   </div>
 </div>
 
-<!-- UI 10: Full-screen follow-up (shown after clicking NO). No clickable elements. -->
+<!-- UI 10: Full-screen follow-up (shown after clicking NO). ONLY Next button is clickable. -->
 <div id="ui10Overlay" class="ui-overlay ui-fullscreen" aria-hidden="true">
   <div class="ui-frame" style="--ratio: 2.201834862;">
     <img src="assets/screen10.png" alt="" />
+    <button id="ui10NextBtn" type="button" aria-label="Next"></button>
+  </div>
+</div>
+
+
+<!-- Screen 12: Appears after UI10 Next and stays for 2 seconds (non-clickable) -->
+<div id="ui1aOverlay" class="house-seq-overlay" aria-hidden="true">
+  <div class="house-seq-wrap">
+    <img src="assets/screen12.png" alt="Tap on highlighted house of son" />
+  </div>
+</div>
+
+<!-- Screen 13: Appears automatically after Screen 12. ONLY '>' button is clickable -->
+<div id="ui2aOverlay" class="house-seq-overlay" aria-hidden="true">
+  <div class="house-seq-wrap">
+    <img src="assets/screen13.png" alt="Now Farmer and his son are together as one identity" />
+    <button id="ui2aNextBtn" type="button" aria-label="Next"></button>
+  </div>
+</div>
+
+<!-- Screen 14: Appears after Screen 13 '>' click. ONLY '>' button is clickable -->
+<div id="ui3aOverlay" class="house-seq-overlay" aria-hidden="true">
+  <div class="house-seq-wrap">
+    <img src="assets/screen14.png" alt="The highlighted block belongs to Farmer and Vest State" />
+    <button id="ui3aNextBtn" type="button" aria-label="Next"></button>
+  </div>
+</div>
+
+<!-- Screen 15: Appears after Screen 14 '>' click (non-clickable) -->
+<div id="ui4aOverlay" class="house-seq-overlay" aria-hidden="true">
+  <div class="house-seq-wrap">
+    <img src="assets/screen15.png" alt="Tap on Vest Button" />
+  </div>
+</div>
+
+<!-- Screen 16: Appears after ceiling meter animation. ONLY Home button is clickable -->
+<div id="ui5aOverlay" class="house-seq-overlay" aria-hidden="true">
+  <div class="house-seq-wrap">
+    <img src="assets/screen16.png" alt="Scenario complete screen with Next and Home buttons" />
+    <button id="ui5aHomeBtn" type="button" aria-label="Home"></button>
   </div>
 </div>
 
 <!-- Top-right meter card (non-clickable, shown with the model overlays) -->
 <div id="meterOverlay" class="ui-overlay" aria-hidden="true">
-  <img src="assets/checkbox_card.png" alt="" />
+  <div class="meter-card-wrap">
+    <img src="assets/checkbox_card.png" alt="" />
+    <div id="meterAnimLayer" aria-hidden="true">
+      <div class="meter-sweep"></div>
+      <div class="meter-needle-pulse"></div>
+    </div>
+  </div>
 </div>
 
 <!-- UI 11: Full-screen follow-up (shown after clicking YES on UI9). ONLY Try Again is clickable. -->
@@ -600,7 +902,7 @@
     }
 
     function showUI10(){
-      // UI9 -> UI10 (full-screen). No clickable elements.
+      // UI9 -> UI10 (full-screen). ONLY Next is clickable.
       setVisible(ui6Overlay, false);
       setVisible(ui7Overlay, false);
       setVisible(ui8Overlay, false);
@@ -704,6 +1006,104 @@
         if (loader) loader.style.display = 'flex';
         if (errBox) errBox.style.display = 'none';
 
+        function debugModelViewerMeshes(mv){
+          try {
+            if (!mv) {
+              console.warn('[Mesh Debug] model-viewer element not found');
+              return;
+            }
+
+            // Expose for manual console inspection
+            window.__mv = mv;
+
+            function collectSceneCandidates(el){
+              var out = [];
+              try { if (el.model && el.model.scene) out.push({ label: 'mv.model.scene', root: el.model.scene }); } catch(_e){}
+              try { if (el.scene) out.push({ label: 'mv.scene', root: el.scene }); } catch(_e){}
+
+              // Best-effort scan for internal scene symbols/props used by model-viewer builds
+              try {
+                Reflect.ownKeys(el).forEach(function(k){
+                  var keyName = String(k);
+                  var val = null;
+                  try { val = el[k]; } catch(_err){}
+                  if (!val) return;
+                  if (val && val.model && val.model.scene) {
+                    out.push({ label: keyName + '.model.scene', root: val.model.scene });
+                  } else if (val && val.scene && (val.scene.children || val.scene.type)) {
+                    out.push({ label: keyName + '.scene', root: val.scene });
+                  }
+                });
+              } catch(_e){}
+
+              // de-duplicate by object reference
+              var seen = [];
+              return out.filter(function(item){
+                if (!item || !item.root) return false;
+                if (seen.indexOf(item.root) !== -1) return false;
+                seen.push(item.root);
+                return true;
+              });
+            }
+
+            function printTree(root){
+              var meshCount = 0;
+              var lines = [];
+
+              function walk(obj, depth){
+                if (!obj) return;
+                var indent = new Array(depth + 1).join('  ');
+                var type = obj.type || (obj.isMesh ? 'Mesh' : 'Object3D');
+                var name = (obj.name != null && obj.name !== '') ? obj.name : '(no-name)';
+                lines.push(indent + '- ' + type + ' | name: "' + name + '"');
+
+                if (obj.isMesh || type === 'Mesh') {
+                  meshCount++;
+                  try {
+                    console.log('[Mesh Debug] Mesh ' + meshCount + ':', {
+                      name: obj.name,
+                      type: type,
+                      material: Array.isArray(obj.material)
+                        ? obj.material.map(function(m){ return m && m.name ? m.name : '(unnamed-material)'; })
+                        : (obj.material && obj.material.name ? obj.material.name : obj.material),
+                      geometryGroups: obj.geometry && obj.geometry.groups ? obj.geometry.groups.length : 0,
+                      uuid: obj.uuid
+                    });
+                  } catch(_e){}
+                }
+
+                var children = obj.children || [];
+                for (var i = 0; i < children.length; i++) walk(children[i], depth + 1);
+              }
+
+              walk(root, 0);
+              console.log('[Mesh Debug] Object tree\\n' + lines.join('\\n'));
+              console.log('[Mesh Debug] Total meshes found:', meshCount);
+              return meshCount;
+            }
+
+            var candidates = collectSceneCandidates(mv);
+            console.log('[Mesh Debug] model-viewer loaded. Inspecting GLB...', mv);
+            console.log('[Mesh Debug] Scene candidates found:', candidates.map(function(c){ return c.label; }));
+
+            if (!candidates.length) {
+              console.warn('[Mesh Debug] Could not access internal Three.js scene from model-viewer in this build.');
+              console.log('[Mesh Debug] You can still inspect manually using window.__mv in DevTools.');
+              return;
+            }
+
+            // Use the first accessible scene root
+            var meshCount = printTree(candidates[0].root);
+            if (meshCount <= 1) {
+              console.warn('[Mesh Debug] Only 1 mesh found (or model is merged). Separate parts in Blender if you need house-level hide/show.');
+            } else {
+              console.log('[Mesh Debug] Multiple meshes are available. You can target individual buildings by name.');
+            }
+          } catch (err) {
+            console.error('[Mesh Debug] Error while inspecting model:', err);
+          }
+        }
+
         function ensureModelViewerLoaded(timeoutMs){
           timeoutMs = timeoutMs || 15000;
 
@@ -769,6 +1169,8 @@
 
             mv.addEventListener('load', function(){
               if (loader) loader.style.display = 'none';
+              // Mesh debug console (helps check if GLB contains multiple meshes/parts)
+              setTimeout(function(){ debugModelViewerMeshes(mv); }, 200);
             }, { once:true });
 
             mv.addEventListener('error', function(){
@@ -841,6 +1243,1063 @@
       });
     }
 
+  })();
+
+
+      /* HOUSE FLOW BLINK + LABEL PATCH (single GLB / multi-mesh) */
+      (function houseFlowBlinkPatch(){
+        const HOUSE_FLOW_CONFIG = {
+          modelViewerSelector: '#mvModal',
+          screen10Selector: '#ui10Overlay',
+          nextButtonSelector: '#ui10NextBtn',
+          screen2aSelector: null,
+          us2ButtonSelector: '#ui2aNextBtn',
+          targets: [
+            { id: 'son', meshName: 'house003', label: "Farmer’s Son House", tooltipAsset: 'assets/tooltip_farmers_son_house.png', hideOnClick: true },
+            { id: 'father', meshNames: ['wall_H', 'roof_H', 'beam_H', 'door_H', 'window_H'], label: "Farmer’s Father House", tooltipAsset: 'assets/tooltip_farmers_house.png', hideOnClick: false }
+          ],
+          blink: { color: '#ff4da6', intervalMs: 420, intensityOn: 0.85, intensityOff: 0.0 }
+        };
+
+        let sceneRoot = null;
+        let modelReady = false;
+        let raycaster = null;
+        let pointerNdc = null;
+        let activeIndex = -1;
+        let activeMesh = null;
+        let activeMeshes = [];
+        let blinkTimer = null;
+        let blinkState = false;
+        let labelEl = null;
+        let rafLabel = 0;
+        let flowStarted = false;
+        let clickEnabled = false;
+        const materialBackup = new WeakMap();
+        const hiddenMeshes = new Set();
+        let observerInstalled = false;
+        let uiSeqTimer = null;
+
+        function getModelViewer(){ return document.querySelector(HOUSE_FLOW_CONFIG.modelViewerSelector); }
+        function getScreen10(){ return document.querySelector(HOUSE_FLOW_CONFIG.screen10Selector); }
+        function getScreen10NextBtn(){ return HOUSE_FLOW_CONFIG.nextButtonSelector ? document.querySelector(HOUSE_FLOW_CONFIG.nextButtonSelector) : null; }
+        function getUs2Btn(){ return HOUSE_FLOW_CONFIG.us2ButtonSelector ? document.querySelector(HOUSE_FLOW_CONFIG.us2ButtonSelector) : null; }
+
+        function getUs1Overlay(){ return document.getElementById('ui1aOverlay'); }
+        function getUs2Overlay(){ return document.getElementById('ui2aOverlay'); }
+        function setSeqVisible(el, visible){
+          if (!el) return;
+          el.classList.toggle('is-visible', !!visible);
+          el.setAttribute('aria-hidden', visible ? 'false' : 'true');
+        }
+        function clearUiSequenceTimer(){
+          if (uiSeqTimer) { clearTimeout(uiSeqTimer); uiSeqTimer = null; }
+        }
+        function hideUiSequenceOverlays(){
+          clearUiSequenceTimer();
+          setSeqVisible(getUs1Overlay(), false);
+          setSeqVisible(getUs2Overlay(), false);
+        }
+        function showScreen12ThenScreen13(){
+          hideUiSequenceOverlays();
+          // Screen 12 visible for 2 seconds, then Screen 13 becomes visible.
+          setSeqVisible(getUs1Overlay(), true);
+          uiSeqTimer = setTimeout(function(){
+            setSeqVisible(getUs1Overlay(), false);
+            setSeqVisible(getUs2Overlay(), true);
+            const b = getUs2Btn();
+            if (b) {
+              b.disabled = false;
+              b.style.pointerEvents = 'auto';
+              b.style.opacity = '1';
+            }
+          }, 2000);
+        }
+
+        const markerEls = new Map();
+
+        function ensureMarkers(){
+          const modal = document.getElementById('modelModal') || document.body;
+          HOUSE_FLOW_CONFIG.targets.forEach((cfg, idx) => {
+            const key = cfg.id || String(idx);
+            let el = markerEls.get(key);
+            if (!el || !modal.contains(el)) {
+              el = document.createElement('div');
+              el.className = 'house-flow-marker';
+              el.dataset.markerKey = key;
+              const img = document.createElement('img');
+              img.alt = cfg.label || '';
+              img.decoding = 'async';
+              if (cfg.tooltipAsset) img.src = cfg.tooltipAsset;
+              el.appendChild(img);
+              modal.appendChild(el);
+              markerEls.set(key, el);
+            }
+          });
+          return markerEls;
+        }
+
+        function setMarkersVisible(visible){
+          ensureMarkers();
+          HOUSE_FLOW_CONFIG.targets.forEach((cfg, idx) => {
+            const key = cfg.id || String(idx);
+            const el = markerEls.get(key);
+            if (!el) return;
+            el.classList.toggle('visible', !!visible);
+          });
+        }
+
+        function updateMarkersVisibility(){
+          ensureMarkers();
+          HOUSE_FLOW_CONFIG.targets.forEach((cfg, idx) => {
+            const key = cfg.id || String(idx);
+            const el = markerEls.get(key);
+            if (!el) return;
+            const meshes = getTargetMeshes(cfg);
+            const anyVisible = meshes.some((m) => m && m.visible);
+            el.classList.toggle('visible', anyVisible);
+          });
+        }
+
+        function ensureLabel(){
+          const modal = document.getElementById('modelModal') || document.body;
+          if (labelEl && modal.contains(labelEl)) return labelEl;
+          labelEl = document.createElement('div');
+          labelEl.className = 'house-flow-label';
+          modal.appendChild(labelEl);
+          return labelEl;
+        }
+        function showLabel(text){ /* replaced by image markers */ }
+        function hideLabel(){ /* replaced by image markers */ }
+
+        function isElementVisible(el){
+          if (!el) return false;
+          const cs = getComputedStyle(el);
+          if (cs.display === 'none' || cs.visibility === 'hidden' || Number(cs.opacity) === 0) return false;
+          if (el.hasAttribute('hidden')) return false;
+          const aria = el.getAttribute('aria-hidden');
+          if (aria === 'true') return false;
+          if (el.classList.contains('is-visible') || el.classList.contains('is-open') || el.classList.contains('visible')) return true;
+          const r = el.getBoundingClientRect();
+          return r.width > 0 && r.height > 0;
+        }
+
+        function getSceneRootFromModelViewer(modelViewer){
+          if (!modelViewer) return null;
+          const syms = Object.getOwnPropertySymbols(modelViewer);
+          for (const s of syms){
+            const v = modelViewer[s];
+            if (!v) continue;
+            if (v.scene && v.scene.isObject3D) return v.scene;
+            if (v.currentGLTF && v.currentGLTF.scene && v.currentGLTF.scene.isObject3D) return v.currentGLTF.scene;
+          }
+          return null;
+        }
+
+        function findMeshByName(root, name){
+          if (!root || !name) return null;
+          let exact = null;
+          let partial = null;
+          root.traverse(obj => {
+            if (!obj || !obj.isMesh) return;
+            if (exact) return;
+            if (obj.name === name) { exact = obj; return; }
+            if (!partial && obj.name && obj.name.toLowerCase().includes(String(name).toLowerCase())) partial = obj;
+          });
+          return exact || partial;
+        }
+
+        function getTargetMeshes(cfg){
+          if (!cfg || !sceneRoot) return [];
+          const names = Array.isArray(cfg.meshNames) ? cfg.meshNames : (cfg.meshName ? [cfg.meshName] : []);
+          const meshes = [];
+          names.forEach((name) => {
+            const mesh = findMeshByName(sceneRoot, name);
+            if (mesh) meshes.push(mesh);
+          });
+          return meshes;
+        }
+
+        function backupMaterial(mesh){
+          if (!mesh || !mesh.material || materialBackup.has(mesh)) return;
+          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+          materialBackup.set(mesh, mats.map(m => ({
+            color: m && m.color ? m.color.clone() : null,
+            emissive: m && m.emissive ? m.emissive.clone() : null,
+            emissiveIntensity: (m && typeof m.emissiveIntensity === 'number') ? m.emissiveIntensity : null
+          })));
+        }
+        function restoreMaterial(mesh){
+          if (!mesh || !mesh.material) return;
+          const backup = materialBackup.get(mesh); if (!backup) return;
+          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+          mats.forEach((m, i) => {
+            const b = backup[i]; if (!m || !b) return;
+            if (b.color && m.color) m.color.copy(b.color);
+            if (b.emissive && m.emissive) m.emissive.copy(b.emissive);
+            if (b.emissiveIntensity != null) m.emissiveIntensity = b.emissiveIntensity;
+            m.needsUpdate = true;
+          });
+        }
+        function setBlinkVisual(mesh, on){
+          if (!mesh || !mesh.material) return;
+          backupMaterial(mesh);
+          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+          mats.forEach((m) => {
+            if (!m) return;
+            if (m.emissive){
+              m.emissive.set(HOUSE_FLOW_CONFIG.blink.color);
+              m.emissiveIntensity = on ? HOUSE_FLOW_CONFIG.blink.intensityOn : HOUSE_FLOW_CONFIG.blink.intensityOff;
+            } else if (m.color) {
+              if (on) m.color.set(HOUSE_FLOW_CONFIG.blink.color);
+              else {
+                const b = materialBackup.get(mesh)?.[0];
+                if (b?.color) m.color.copy(b.color);
+              }
+            }
+            m.needsUpdate = true;
+          });
+        }
+        function stopBlink(){
+          if (blinkTimer){ clearInterval(blinkTimer); blinkTimer = null; }
+          if (activeMeshes.length) activeMeshes.forEach(restoreMaterial);
+          else if (activeMesh) restoreMaterial(activeMesh);
+          blinkState = false;
+        }
+        function startBlink(meshOrMeshes){
+          stopBlink();
+          activeMeshes = Array.isArray(meshOrMeshes) ? meshOrMeshes.filter(Boolean) : (meshOrMeshes ? [meshOrMeshes] : []);
+          activeMesh = activeMeshes[0] || null;
+          if (!activeMesh) return;
+          activeMeshes.forEach((mesh) => setBlinkVisual(mesh, true));
+          blinkState = true;
+          blinkTimer = setInterval(() => {
+            if (!activeMeshes.length) return;
+            blinkState = !blinkState;
+            activeMeshes.forEach((mesh) => setBlinkVisual(mesh, blinkState));
+          }, HOUSE_FLOW_CONFIG.blink.intervalMs);
+        }
+
+        const _bb = new THREE.Box3();
+        const _center = new THREE.Vector3();
+        const _size = new THREE.Vector3();
+        const _anchor = new THREE.Vector3();
+        const _ndc = new THREE.Vector3();
+        function projectMeshesAnchor(meshes, outAnchor){
+          if (!meshes || !meshes.length) return false;
+          let hasBox = false;
+          _bb.makeEmpty();
+          meshes.forEach((m) => {
+            if (!m || !m.visible) return;
+            const mb = new THREE.Box3().setFromObject(m);
+            if (!mb.isEmpty()) {
+              if (!hasBox) { _bb.copy(mb); hasBox = true; }
+              else _bb.union(mb);
+            }
+          });
+          if (!hasBox || _bb.isEmpty()) return false;
+          _bb.getCenter(_center);
+          _bb.getSize(_size);
+          outAnchor.copy(_center);
+          outAnchor.y += Math.max(_size.y * 0.80, 0.26);
+          return true;
+        }
+
+        function updateLabelPosition(){
+          rafLabel = requestAnimationFrame(updateLabelPosition);
+          const mv = getModelViewer();
+          if (!mv || !sceneRoot) return;
+          const rect = mv.getBoundingClientRect();
+          if (rect.width <= 0 || rect.height <= 0) return;
+
+          const syms = Object.getOwnPropertySymbols(mv);
+          let camera = null;
+          for (const s of syms){ const v = mv[s]; if (v && v.camera && v.camera.isCamera) { camera = v.camera; break; } }
+          if (!camera) return;
+
+          ensureMarkers();
+          HOUSE_FLOW_CONFIG.targets.forEach((cfg, idx) => {
+            const key = cfg.id || String(idx);
+            const el = markerEls.get(key);
+            if (!el || !el.classList.contains('visible')) return;
+            const meshes = getTargetMeshes(cfg).filter((m) => m && m.visible);
+            if (!meshes.length) { el.classList.remove('visible'); return; }
+            if (!projectMeshesAnchor(meshes, _anchor)) { el.classList.remove('visible'); return; }
+            _ndc.copy(_anchor).project(camera);
+            if (!Number.isFinite(_ndc.x) || !Number.isFinite(_ndc.y) || _ndc.z > 1.2) return;
+            const x = rect.left + ((_ndc.x + 1) / 2) * rect.width;
+            const y = rect.top + ((1 - _ndc.y) / 2) * rect.height;
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+          });
+        }
+
+        function clearFlow(){
+          stopBlink();
+          hideLabel();
+          setMarkersVisible(false);
+          hideUiSequenceOverlays();
+          activeIndex = -1;
+          activeMesh = null;
+          activeMeshes = [];
+          clickEnabled = false;
+        }
+
+        function showTarget(index){
+          if (!sceneRoot) return false;
+          if (index < 0 || index >= HOUSE_FLOW_CONFIG.targets.length) {
+            clearFlow();
+            return false;
+          }
+          const cfg = HOUSE_FLOW_CONFIG.targets[index];
+          const meshes = getTargetMeshes(cfg);
+          if (!meshes.length) {
+            console.warn('[HouseFlow] Target mesh(es) not found:', cfg.meshNames || cfg.meshName);
+            return false;
+          }
+          meshes.forEach((mesh) => {
+            mesh.visible = true;
+            hiddenMeshes.delete(mesh);
+          });
+          activeIndex = index;
+          activeMesh = meshes[0];
+          activeMeshes = meshes;
+          startBlink(meshes);
+          showLabel(cfg.label);
+          updateMarkersVisibility();
+          clickEnabled = true;
+          return true;
+        }
+
+        function advanceFlow(){
+          if (!sceneRoot) return;
+          if (activeIndex >= 0) {
+            const cfg = HOUSE_FLOW_CONFIG.targets[activeIndex];
+            const currentMeshes = activeMeshes.length ? [...activeMeshes] : (activeMesh ? [activeMesh] : []);
+            if (cfg && cfg.hideOnClick && currentMeshes.length) {
+              stopBlink();
+              hideLabel();
+              currentMeshes.forEach((mesh) => {
+                mesh.visible = false;
+                hiddenMeshes.add(mesh);
+              });
+              activeMesh = null;
+              activeMeshes = [];
+              updateMarkersVisibility();
+            }
+          }
+          const nextIndex = activeIndex + 1;
+          if (!showTarget(nextIndex)) {
+            clickEnabled = false;
+            const us2btn = getUs2Btn();
+            if (us2btn) {
+              us2btn.disabled = false;
+              us2btn.style.pointerEvents = 'auto';
+              us2btn.style.opacity = '1';
+            }
+          }
+        }
+
+        function startFlow(){
+          if (!modelReady || !sceneRoot) return;
+          flowStarted = true;
+          HOUSE_FLOW_CONFIG.targets.forEach((t) => {
+            getTargetMeshes(t).forEach((mesh) => {
+              if (hiddenMeshes.has(mesh)) { mesh.visible = true; hiddenMeshes.delete(mesh); }
+            });
+          });
+          clearFlow();
+          setMarkersVisible(true);
+          updateMarkersVisibility();
+          showTarget(0);
+        }
+
+        function onModelClick(ev){
+          if (!clickEnabled || !activeMesh || !sceneRoot) return;
+          const mv = getModelViewer(); if (!mv || ev.target !== mv) return;
+          const rect = mv.getBoundingClientRect();
+          if (rect.width <= 0 || rect.height <= 0) return;
+          if (!raycaster) raycaster = new THREE.Raycaster();
+          if (!pointerNdc) pointerNdc = new THREE.Vector2();
+          const cx = (ev.clientX != null ? ev.clientX : (ev.changedTouches && ev.changedTouches[0] && ev.changedTouches[0].clientX));
+          const cy = (ev.clientY != null ? ev.clientY : (ev.changedTouches && ev.changedTouches[0] && ev.changedTouches[0].clientY));
+          if (cx == null || cy == null) return;
+          pointerNdc.x = ((cx - rect.left) / rect.width) * 2 - 1;
+          pointerNdc.y = -((cy - rect.top) / rect.height) * 2 + 1;
+          const syms = Object.getOwnPropertySymbols(mv);
+          let camera = null;
+          for (const s of syms){ const v = mv[s]; if (v && v.camera && v.camera.isCamera) { camera = v.camera; break; } }
+          if (!camera) return;
+          raycaster.setFromCamera(pointerNdc, camera);
+          const hits = raycaster.intersectObject(sceneRoot, true);
+          if (!hits || !hits.length) return;
+          let hitMesh = hits[0].object;
+          while (hitMesh && !hitMesh.isMesh) hitMesh = hitMesh.parent;
+          if (!hitMesh) return;
+          const activeSet = new Set(activeMeshes.length ? activeMeshes : (activeMesh ? [activeMesh] : []));
+          let a = hitMesh;
+          let matched = false;
+          while (a){ if (activeSet.has(a)) { matched = true; break; } a = a.parent; }
+          if (matched) {
+            if (ev.preventDefault) ev.preventDefault();
+            if (ev.stopPropagation) ev.stopPropagation();
+            advanceFlow();
+          }
+        }
+        function onScreen10Next(ev){
+          const s10 = getScreen10();
+          const nextBtn = getScreen10NextBtn();
+          if (!s10 || !isElementVisible(s10) || !nextBtn) return;
+          if (ev?.preventDefault) ev.preventDefault();
+          if (ev?.stopPropagation) ev.stopPropagation();
+          s10.classList.remove('is-visible');
+          s10.setAttribute('aria-hidden', 'true');
+          showScreen12ThenScreen13();
+        }
+
+        function bindScreen10Next(){
+          const btn = getScreen10NextBtn();
+          if (!btn || btn.__houseFlowNextBound) return;
+          btn.__houseFlowNextBound = true;
+          btn.addEventListener('click', onScreen10Next, true);
+          btn.addEventListener('touchend', onScreen10Next, true);
+        }
+
+        function installObserver(){
+          if (observerInstalled) return;
+          observerInstalled = true;
+          const s10 = getScreen10();
+          if (!s10) return;
+          const check = () => {
+            if (isElementVisible(s10)) {
+              // Reset flow when UI10 opens. Start happens only on Next click.
+              flowStarted = false;
+              clearFlow();
+            }
+          };
+          const mo = new MutationObserver(check);
+          mo.observe(s10, { attributes: true, attributeFilter: ['class','style','aria-hidden','hidden'] });
+          check();
+        }
+
+        function bindEvents(){
+          bindScreen10Next();
+          const mv = getModelViewer();
+          if (mv && !mv.__houseFlowClickBound) {
+            mv.__houseFlowClickBound = true;
+            mv.addEventListener('click', onModelClick, true);
+            mv.addEventListener('touchend', onModelClick, true);
+          }
+          const us2btn = getUs2Btn();
+          if (us2btn && !us2btn.__houseFlowReadyStyled) {
+            us2btn.__houseFlowReadyStyled = true;
+            us2btn.disabled = false;
+            us2btn.style.pointerEvents = 'auto';
+            us2btn.addEventListener('click', function(e){
+              if (e?.preventDefault) e.preventDefault();
+              if (e?.stopPropagation) e.stopPropagation();
+              if (!isElementVisible(getUs2Overlay())) return;
+              hideUiSequenceOverlays();
+              startFlow();
+            }, true);
+            us2btn.addEventListener('touchend', function(e){
+              if (e?.preventDefault) e.preventDefault();
+              if (e?.stopPropagation) e.stopPropagation();
+              if (!isElementVisible(getUs2Overlay())) return;
+              hideUiSequenceOverlays();
+              startFlow();
+            }, true);
+          }
+        }
+
+        function onModelLoaded(){
+          const mv = getModelViewer();
+          sceneRoot = getSceneRootFromModelViewer(mv);
+          modelReady = !!sceneRoot;
+          if (!modelReady) {
+            console.warn('[HouseFlow] Could not access internal Three.js scene from <model-viewer>.');
+            return;
+          }
+          bindEvents();
+          installObserver();
+          if (!rafLabel) rafLabel = requestAnimationFrame(updateLabelPosition);
+          console.log('[HouseFlow] Ready. Targets:', HOUSE_FLOW_CONFIG.targets.map(t => t.meshName || (t.meshNames || []).join(',')));
+        }
+
+        function init(){
+          const mv = getModelViewer();
+          if (!mv) { console.warn('[HouseFlow] model-viewer not found:', HOUSE_FLOW_CONFIG.modelViewerSelector); return; }
+          ensureLabel();
+          ensureMarkers();
+          bindEvents();
+          installObserver();
+          if (mv.loaded) onModelLoaded();
+          mv.addEventListener('load', onModelLoaded);
+        }
+
+        if (window.THREE) init();
+        else window.addEventListener('load', init, { once: true });
+      })();
+</script>
+
+
+<script>
+  (function ui10Screen12Screen13FallbackPatch(){
+    var ui10Overlay = document.getElementById('ui10Overlay');
+    var ui10NextBtn = document.getElementById('ui10NextBtn');
+    var screen12Overlay = document.getElementById('ui1aOverlay');
+    var screen13Overlay = document.getElementById('ui2aOverlay');
+    var screen13NextBtn = document.getElementById('ui2aNextBtn');
+    var tSeq = null;
+    var lastTriggerAt = 0;
+
+    function isVisible(el){
+      if (!el) return false;
+      if (el.hidden) return false;
+      if (el.getAttribute('aria-hidden') === 'true') return false;
+      if (!el.classList.contains('is-visible')) return false;
+      var cs = window.getComputedStyle(el);
+      return cs.display !== 'none' && cs.visibility !== 'hidden' && cs.opacity !== '0';
+    }
+
+    function setVisible(el, on){
+      if (!el) return;
+      el.classList.toggle('is-visible', !!on);
+      el.setAttribute('aria-hidden', on ? 'false' : 'true');
+    }
+
+    function clearSeqTimer(){
+      if (tSeq){ clearTimeout(tSeq); tSeq = null; }
+    }
+
+    function resetSequenceUi(){
+      clearSeqTimer();
+      setVisible(screen12Overlay, false);
+      setVisible(screen13Overlay, false);
+      if (screen13NextBtn){
+        screen13NextBtn.disabled = false;
+        screen13NextBtn.style.pointerEvents = 'auto';
+      }
+    }
+
+    function startSequence(){
+      resetSequenceUi();
+      setVisible(screen12Overlay, true);
+      tSeq = setTimeout(function(){
+        setVisible(screen12Overlay, false);
+        setVisible(screen13Overlay, true);
+        if (screen13NextBtn){
+          screen13NextBtn.disabled = false;
+          screen13NextBtn.style.pointerEvents = 'auto';
+        }
+      }, 2000); // 2 seconds
+    }
+
+    function onUi10Next(e){
+      var now = Date.now();
+      if (now - lastTriggerAt < 350) return; // guard click+touch duplicate
+      lastTriggerAt = now;
+      if (!ui10Overlay || !ui10NextBtn) return;
+      if (!isVisible(ui10Overlay)) return;
+      if (e && e.preventDefault) e.preventDefault();
+      if (e && e.stopPropagation) e.stopPropagation();
+      ui10Overlay.classList.remove('is-visible');
+      ui10Overlay.setAttribute('aria-hidden', 'true');
+      startSequence();
+    }
+
+    if (ui10NextBtn && !ui10NextBtn.__ui10Screen12SeqFallbackBound){
+      ui10NextBtn.__ui10Screen12SeqFallbackBound = true;
+      ui10NextBtn.addEventListener('click', onUi10Next, true);
+      ui10NextBtn.addEventListener('touchend', onUi10Next, true);
+    }
+
+    if (ui10Overlay && !ui10Overlay.__ui10Screen12SeqFallbackObserver){
+      ui10Overlay.__ui10Screen12SeqFallbackObserver = true;
+      var mo = new MutationObserver(function(){
+        if (isVisible(ui10Overlay)) resetSequenceUi();
+      });
+      mo.observe(ui10Overlay, { attributes:true, attributeFilter:['class','style','aria-hidden','hidden'] });
+    }
+
+    // Defensive reset on page restore/navigation.
+    window.addEventListener('pageshow', resetSequenceUi);
+  })();
+</script>
+
+<script>
+  (function ui13ToUi14Ui15SequencePatch(){
+    var ui10Overlay = document.getElementById('ui10Overlay');
+    var ui13Overlay = document.getElementById('ui2aOverlay');
+    var ui13NextBtn = document.getElementById('ui2aNextBtn');
+    var ui14Overlay = document.getElementById('ui3aOverlay');
+    var ui14NextBtn = document.getElementById('ui3aNextBtn');
+    var ui15Overlay = document.getElementById('ui4aOverlay');
+    var lastTriggerAt = 0;
+
+    function isVisible(el){
+      if (!el) return false;
+      if (el.hidden) return false;
+      if (el.getAttribute('aria-hidden') === 'true') return false;
+      if (!el.classList.contains('is-visible')) return false;
+      var cs = window.getComputedStyle(el);
+      return cs.display !== 'none' && cs.visibility !== 'hidden' && cs.opacity !== '0';
+    }
+
+    function setVisible(el, on){
+      if (!el) return;
+      el.classList.toggle('is-visible', !!on);
+      el.setAttribute('aria-hidden', on ? 'false' : 'true');
+    }
+
+    function resetUi14Ui15(){
+      setVisible(ui14Overlay, false);
+      setVisible(ui15Overlay, false);
+      if (ui14NextBtn){
+        ui14NextBtn.disabled = false;
+        ui14NextBtn.style.pointerEvents = 'auto';
+        ui14NextBtn.style.opacity = '1';
+      }
+    }
+
+    function onUi13NextIntercept(e){
+      var t = e && e.target;
+      if (!t || t !== ui13NextBtn) return;
+      if (!isVisible(ui13Overlay)) return;
+      var now = Date.now();
+      if (now - lastTriggerAt < 350) {
+        if (e.preventDefault) e.preventDefault();
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+        if (e.stopPropagation) e.stopPropagation();
+        return;
+      }
+      lastTriggerAt = now;
+
+      // Intercept BEFORE the existing Screen13 handler (which starts the earlier flow)
+      if (e.preventDefault) e.preventDefault();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+      if (e.stopPropagation) e.stopPropagation();
+
+      setVisible(ui13Overlay, false);
+      resetUi14Ui15();
+      setVisible(ui14Overlay, true);
+      if (ui14NextBtn){
+        ui14NextBtn.disabled = false;
+        ui14NextBtn.style.pointerEvents = 'auto';
+      }
+    }
+
+    function onUi14Next(e){
+      if (!isVisible(ui14Overlay)) return;
+      if (e && e.preventDefault) e.preventDefault();
+      if (e && e.stopPropagation) e.stopPropagation();
+      setVisible(ui14Overlay, false);
+      setVisible(ui15Overlay, true);
+      // Dispatch a lightweight event so downstream patches can reliably sync clickable state.
+      try { window.dispatchEvent(new CustomEvent('ui15-shown')); } catch(_){}
+    }
+
+    // Capture on document so we block the previously bound button handler on UI13.
+    if (!document.__ui13Ui14PatchBound){
+      document.__ui13Ui14PatchBound = true;
+      document.addEventListener('click', onUi13NextIntercept, true);
+      document.addEventListener('touchend', onUi13NextIntercept, true);
+    }
+
+    if (ui14NextBtn && !ui14NextBtn.__ui14NextBound){
+      ui14NextBtn.__ui14NextBound = true;
+      ui14NextBtn.addEventListener('click', onUi14Next, true);
+      ui14NextBtn.addEventListener('touchend', onUi14Next, true);
+    }
+
+    if (ui10Overlay && !ui10Overlay.__ui13Ui14PatchObserver){
+      ui10Overlay.__ui13Ui14PatchObserver = true;
+      var mo = new MutationObserver(function(){
+        if (isVisible(ui10Overlay)) resetUi14Ui15();
+      });
+      mo.observe(ui10Overlay, { attributes:true, attributeFilter:['class','style','aria-hidden','hidden'] });
+    }
+
+    window.addEventListener('pageshow', resetUi14Ui15);
+  })();
+</script>
+
+
+<script>
+  (function ui15VestAndCeilingMeterAnimationPatch(){
+    var ui10Overlay = document.getElementById('ui10Overlay');
+    var ui15Overlay = document.getElementById('ui4aOverlay');
+    var ui5Overlay = document.getElementById('ui5Overlay');
+    var ui5VestBtn = document.getElementById('ui5BtnVest');
+    var meterOverlay = document.getElementById('meterOverlay');
+    var meterAnimLayer = document.getElementById('meterAnimLayer');
+
+    var meterAnimBuilt = false;
+    var meterAnimTimers = [];
+    var meterAnimRunId = 0;
+    var vestUnlockedByFlipCue = false;
+    var lastVestTapAt = 0;
+
+    function isVisible(el){
+      if (!el) return false;
+      if (el.hidden) return false;
+      if (el.getAttribute('aria-hidden') === 'true') return false;
+      if (!el.classList.contains('is-visible')) return false;
+      var cs = window.getComputedStyle(el);
+      return cs.display !== 'none' && cs.visibility !== 'hidden' && cs.opacity !== '0';
+    }
+
+    function setVisible(el, on){
+      if (!el) return;
+      el.classList.toggle('is-visible', !!on);
+      el.setAttribute('aria-hidden', on ? 'false' : 'true');
+    }
+
+    function setVestEnabled(on){
+      if (!ui5VestBtn) return;
+      ui5VestBtn.classList.toggle('is-enabled', !!on);
+      ui5VestBtn.disabled = !on;
+      ui5VestBtn.style.pointerEvents = on ? 'auto' : 'none';
+      ui5VestBtn.style.opacity = on ? '1' : '';
+    }
+
+    function clearMeterTimers(){
+      while (meterAnimTimers.length){
+        var t = meterAnimTimers.pop();
+        clearTimeout(t);
+      }
+    }
+
+    function ensureMeterSegments(){
+      if (!meterAnimLayer || meterAnimBuilt) return;
+      // Segment bounds extracted from the provided checkbox_card.png (912x336) so the overlay aligns exactly.
+      var imgW = 912, imgH = 336; // imgH kept for alignment documentation
+      var segs = [
+        [50,69],[79,98],[107,127],[136,155],[164,184],[193,212],[221,241],[250,269],[279,298],[307,326],
+        [336,355],[364,383],[393,412],[421,441],[450,469],[478,498],[507,526],[536,555],[564,583],[593,612],
+        [621,640],[650,669],[678,698],[707,726],[735,755],[764,783],[792,812],[821,841],[849,869]
+      ];
+      // Animate across the red + right-end bars (visual cue from the reference video)
+      var targetIdx = [18,19,20,21,22,23,24,25,26,27,28];
+
+      targetIdx.forEach(function(segIndex){
+        var s = segs[segIndex];
+        if (!s) return;
+        var span = document.createElement('span');
+        span.className = 'meter-seg';
+        span.dataset.seg = String(segIndex);
+        span.style.left = ((s[0] / imgW) * 100).toFixed(4) + '%';
+        span.style.width = (((s[1] - s[0] + 1) / imgW) * 100).toFixed(4) + '%';
+        meterAnimLayer.appendChild(span);
+      });
+      meterAnimBuilt = true;
+    }
+
+    function resetMeterAnimationVisuals(){
+      if (!meterAnimLayer) return;
+      clearMeterTimers();
+      meterAnimLayer.classList.remove('is-running');
+      var segs = meterAnimLayer.querySelectorAll('.meter-seg');
+      segs.forEach(function(el){
+        el.classList.remove('is-on');
+        el.style.opacity = '0';
+      });
+    }
+
+    function startMeterAnimation(){
+      if (!meterAnimLayer) return;
+      ensureMeterSegments();
+      resetMeterAnimationVisuals();
+      if (meterOverlay) setVisible(meterOverlay, true);
+
+      meterAnimRunId += 1;
+      var runId = meterAnimRunId;
+
+      meterAnimLayer.classList.add('is-active');
+      void meterAnimLayer.offsetWidth;
+      meterAnimLayer.classList.add('is-running');
+
+      var segs = Array.prototype.slice.call(meterAnimLayer.querySelectorAll('.meter-seg'));
+
+      // Pass 1: progressive reveal
+      segs.forEach(function(el, i){
+        var t = setTimeout(function(){
+          if (runId !== meterAnimRunId) return;
+          el.classList.add('is-on');
+          el.style.opacity = '1';
+        }, 90 + i * 85);
+        meterAnimTimers.push(t);
+      });
+
+      // Pass 2: chase shimmer (closer to the reference feel)
+      segs.forEach(function(el, i){
+        var t2 = setTimeout(function(){
+          if (runId !== meterAnimRunId) return;
+          el.style.transition = 'opacity 120ms linear';
+          el.style.opacity = '0.35';
+          setTimeout(function(){
+            if (runId !== meterAnimRunId) return;
+            el.style.opacity = '1';
+          }, 90);
+        }, 1220 + i * 70);
+        meterAnimTimers.push(t2);
+      });
+
+      meterAnimTimers.push(setTimeout(function(){
+        if (runId !== meterAnimRunId) return;
+        meterAnimLayer.classList.remove('is-running');
+      }, 2400));
+    }
+
+    function shouldVestBeEnabled(){
+      // Vest can be enabled when Screen 15 is visible OR when a flip cue event is fired.
+      return !!(isVisible(ui15Overlay) || vestUnlockedByFlipCue);
+    }
+
+    function syncVestState(){
+      if (!ui5VestBtn) return;
+      var canEnable = shouldVestBeEnabled() && (!ui5Overlay || isVisible(ui5Overlay));
+      setVestEnabled(canEnable);
+    }
+
+    function getEventPoint(e){
+      if (!e) return null;
+      if (e.changedTouches && e.changedTouches.length){
+        return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+      }
+      if (e.touches && e.touches.length){
+        return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+      if (typeof e.clientX === 'number' && typeof e.clientY === 'number'){
+        return { x: e.clientX, y: e.clientY };
+      }
+      return null;
+    }
+
+    function pointInsideVestButton(pt){
+      if (!ui5VestBtn || !pt) return false;
+      var r = ui5VestBtn.getBoundingClientRect();
+      var pad = 4;
+      return pt.x >= (r.left - pad) && pt.x <= (r.right + pad) && pt.y >= (r.top - pad) && pt.y <= (r.bottom + pad);
+    }
+
+    function onVestClick(e){
+      if (!ui5VestBtn || !ui5VestBtn.classList.contains('is-enabled')) return;
+      if (!shouldVestBeEnabled()) return;
+
+      var now = Date.now();
+      if (now - lastVestTapAt < 300){
+        if (e && e.preventDefault) e.preventDefault();
+        if (e && e.stopPropagation) e.stopPropagation();
+        return;
+      }
+      lastVestTapAt = now;
+
+      if (e && e.preventDefault) e.preventDefault();
+      if (e && e.stopPropagation) e.stopPropagation();
+
+      if (isVisible(ui15Overlay)) setVisible(ui15Overlay, false);
+      vestUnlockedByFlipCue = false;
+      setVestEnabled(false);
+      startMeterAnimation();
+    }
+
+    function onDocumentVestProxy(e){
+      if (!ui5VestBtn || !ui5VestBtn.classList.contains('is-enabled')) return;
+      if (!shouldVestBeEnabled()) return;
+      if (e.target === ui5VestBtn) return;
+
+      var pt = getEventPoint(e);
+      if (!pointInsideVestButton(pt)) return;
+
+      onVestClick(e);
+      if (e && e.stopImmediatePropagation) e.stopImmediatePropagation();
+    }
+
+    function onFlipShownCue(){
+      vestUnlockedByFlipCue = true;
+      requestAnimationFrame(syncVestState);
+    }
+
+    function hardResetVestAndMeter(){
+      vestUnlockedByFlipCue = false;
+      setVestEnabled(false);
+      resetMeterAnimationVisuals();
+      lastVestTapAt = 0;
+    }
+
+    if (ui5VestBtn && !ui5VestBtn.__vestUi15PatchBound){
+      ui5VestBtn.__vestUi15PatchBound = true;
+      hardResetVestAndMeter();
+      ui5VestBtn.addEventListener('click', onVestClick, true);
+      ui5VestBtn.addEventListener('touchend', onVestClick, true);
+    }
+
+    // Proxy at capture phase to survive overlay/touch quirks on mobile devices.
+    if (!document.__vestUi15PatchProxyBound){
+      document.__vestUi15PatchProxyBound = true;
+      document.addEventListener('click', onDocumentVestProxy, true);
+      document.addEventListener('touchend', onDocumentVestProxy, true);
+    }
+
+    if (ui15Overlay && !ui15Overlay.__vestUi15PatchObserver){
+      ui15Overlay.__vestUi15PatchObserver = true;
+      var mo15 = new MutationObserver(function(){
+        if (isVisible(ui15Overlay)) vestUnlockedByFlipCue = true; // treat Screen 15 as the flip cue
+        syncVestState();
+      });
+      mo15.observe(ui15Overlay, { attributes:true, attributeFilter:['class','style','aria-hidden','hidden'] });
+      syncVestState();
+    }
+
+    // Accept multiple event names so upstream "flipping shown" steps can trigger Vest reliably.
+    ['ui15-shown','flip-shown','flipping-shown','card-flip-shown','ui-flip-shown','flipshown','flippingShown'].forEach(function(evtName){
+      window.addEventListener(evtName, onFlipShownCue);
+    });
+
+    // Optional manual hook for any future flip-screen code: window.__notifyFlipShown()
+    if (typeof window.__notifyFlipShown !== 'function') {
+      window.__notifyFlipShown = onFlipShownCue;
+    }
+
+    if (ui10Overlay && !ui10Overlay.__vestUi15PatchResetObserver){
+      ui10Overlay.__vestUi15PatchResetObserver = true;
+      var mo10 = new MutationObserver(function(){
+        if (isVisible(ui10Overlay)) hardResetVestAndMeter();
+      });
+      mo10.observe(ui10Overlay, { attributes:true, attributeFilter:['class','style','aria-hidden','hidden'] });
+    }
+
+    window.addEventListener('pageshow', hardResetVestAndMeter);
+  })();
+</script>
+
+<script>
+  (function ui16AfterCeilingMeterPatch(){
+    var meterAnimLayer = document.getElementById('meterAnimLayer');
+    var meterOverlay = document.getElementById('meterOverlay');
+    var ui16Overlay = document.getElementById('ui5aOverlay');
+    var ui16HomeBtn = document.getElementById('ui5aHomeBtn');
+
+    var screen1 = document.getElementById('screen1');
+    var screen2 = document.getElementById('screen2');
+    var screen3 = document.getElementById('screen3');
+    var screen4 = document.getElementById('screen4');
+    var modelModal = document.getElementById('modelModal');
+
+    var sawMeterRunStart = false;
+
+    function setVisible(el, on){
+      if (!el) return;
+      el.classList.toggle('is-visible', !!on);
+      el.setAttribute('aria-hidden', on ? 'false' : 'true');
+    }
+
+    function showOnlyScreen1(){
+      [screen1, screen2, screen3, screen4].forEach(function(el, idx){
+        if (!el) return;
+        el.classList.toggle('is-active', idx === 0);
+      });
+
+      if (modelModal){
+        modelModal.classList.remove('is-open');
+        modelModal.setAttribute('aria-hidden', 'true');
+      }
+
+      document.querySelectorAll('.ui-overlay, .house-seq-overlay').forEach(function(el){
+        el.classList.remove('is-visible');
+        el.setAttribute('aria-hidden', 'true');
+      });
+
+      document.querySelectorAll('.house-flow-marker, .house-flow-label').forEach(function(el){
+        el.classList.remove('visible');
+        el.style.display = 'none';
+      });
+
+      if (meterAnimLayer){
+        meterAnimLayer.classList.remove('is-running');
+        meterAnimLayer.classList.remove('is-active');
+        meterAnimLayer.querySelectorAll('.meter-seg').forEach(function(seg){
+          seg.classList.remove('is-on');
+          seg.style.opacity = '0';
+        });
+      }
+
+      sawMeterRunStart = false;
+    }
+
+    function showUi16(){
+      if (!ui16Overlay) return;
+      setVisible(ui16Overlay, true);
+      if (ui16HomeBtn){
+        ui16HomeBtn.disabled = false;
+        ui16HomeBtn.style.pointerEvents = 'auto';
+      }
+    }
+
+    function hideUi16(){
+      if (!ui16Overlay) return;
+      setVisible(ui16Overlay, false);
+    }
+
+    function onMeterClassMutation(){
+      if (!meterAnimLayer) return;
+      var running = meterAnimLayer.classList.contains('is-running');
+      if (running){
+        sawMeterRunStart = true;
+        hideUi16();
+        return;
+      }
+      if (sawMeterRunStart){
+        sawMeterRunStart = false;
+        showUi16();
+      }
+    }
+
+    function onHomeClick(e){
+      if (e && e.preventDefault) e.preventDefault();
+      if (e && e.stopPropagation) e.stopPropagation();
+      hideUi16();
+      if (meterOverlay) setVisible(meterOverlay, false);
+      showOnlyScreen1();
+    }
+
+    if (meterAnimLayer && !meterAnimLayer.__ui16AfterMeterObserverBound){
+      meterAnimLayer.__ui16AfterMeterObserverBound = true;
+      var mo = new MutationObserver(function(muts){
+        for (var i = 0; i < muts.length; i++){
+          if (muts[i].attributeName === 'class'){
+            onMeterClassMutation();
+            break;
+          }
+        }
+      });
+      mo.observe(meterAnimLayer, { attributes:true, attributeFilter:['class'] });
+      onMeterClassMutation();
+    }
+
+    if (ui16HomeBtn && !ui16HomeBtn.__ui16HomeBound){
+      ui16HomeBtn.__ui16HomeBound = true;
+      ui16HomeBtn.addEventListener('click', onHomeClick, true);
+      ui16HomeBtn.addEventListener('touchend', onHomeClick, true);
+    }
+
+    var ui10Overlay = document.getElementById('ui10Overlay');
+    if (ui10Overlay && !ui10Overlay.__ui16AfterMeterResetObserver){
+      ui10Overlay.__ui16AfterMeterResetObserver = true;
+      var mo10 = new MutationObserver(function(){
+        var visible = ui10Overlay.classList.contains('is-visible') && ui10Overlay.getAttribute('aria-hidden') !== 'true';
+        if (visible){
+          hideUi16();
+          sawMeterRunStart = false;
+        }
+      });
+      mo10.observe(ui10Overlay, { attributes:true, attributeFilter:['class','aria-hidden','hidden'] });
+    }
+
+    window.addEventListener('pageshow', function(){
+      hideUi16();
+      sawMeterRunStart = false;
+    });
   })();
 </script>
 
